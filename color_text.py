@@ -27,8 +27,7 @@ MODIFIED = [
 ]
 
 FIELDS = [
-    'name', 'palette', 'trial',
-    'target', 'selected', 'correct', 'seconds'
+    'name', 'palette', 'trial', 'target', 'target_hex', 'selected', 'selected_hex', 'correct', 'seconds'
 ]
 
 class ColorTestApp:
@@ -463,13 +462,15 @@ class ColorTestApp:
             'palette': self.current_palette_name,
             'trial': self.trial_index + 1,
             'target': COLOR_NAMES[self.current_target],
+            'target_hex': MODIFIED[self.current_target] if (self.current_palette_name == "Modified") else ORIGINAL[self.current_target],
             'selected': COLOR_NAMES[selected],
+            'selected_hex': MODIFIED[selected] if (self.current_palette_name == "Modified") else ORIGINAL[selected],
             'correct': int(
                 selected == self.current_target
             ),
             'seconds': f'{elapsed:.3f}'
         }
-
+        print(row)
         self.session_rows.append(row)
 
         self.trial_index += 1
@@ -500,10 +501,9 @@ class ColorTestApp:
             writer.writerows(
                 self.session_rows
             )
-
+        
         correct = sum(
-            row['correct']
-            for row in self.session_rows
+            int(row['correct']) for row in self.session_rows
         )
 
         total = len(self.session_rows)
